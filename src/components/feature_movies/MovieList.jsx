@@ -12,7 +12,12 @@ const MovieList = () => {
   ];
 
   return (
-    <div className="w-full py-[10rem] px-4 bg-white">
+    <div className="w-full py-[10rem] px-4 bg-white flex flex-col gap-24">
+      <div className="order-first">
+        <header className="text-center font-bold text-6xl ">
+          Top 5 Movies
+        </header>
+      </div>
       <div className="max-w-[1240px] mx-auto grid md:grid-cols-5 gap-8">
         {movies.map((movie, index) => (
           <MovieCard

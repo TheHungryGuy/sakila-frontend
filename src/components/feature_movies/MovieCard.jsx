@@ -14,7 +14,7 @@ const MovieCard = ({ title, rentalCount, onSeeMoreClick }) => {
       </p>
       <button
         onClick={onSeeMoreClick}
-        className="bg-yellow-400 lg:w-[150px] rounded-md font-medium my-6 mx-auto px-6 py-3"
+        className="bg-[#000300] text-yellow-400 lg:w-[150px] rounded-md font-medium my-6 mx-auto px-6 py-3"
       >
         See More
       </button>

@@ -1,13 +1,15 @@
 import React from "react";
 import { MdPerson } from "react-icons/md";
 
-const MovieCard = ({ ActorName, MovieCount, onSeeMoreClick }) => {
+const ActorCard = ({ actorName, movieCount, onSeeMoreClick }) => {
   return (
-    <div className="w-full shadow-xl flex flex-col p-4 my-4 rounded-lg hover:scale-105 duration-300">
+    <div className="w-full shadow-xl shadow-amber-400 flex flex-col p-4 my-4 rounded-lg hover:scale-105 duration-300">
       <MdPerson size={80} className="w-20 mx-auto mt-[-3rem] bg-yellow-400" />
-      <h2 className="text-2xl font-bold text-center py-6">{ActorName}</h2>
-      <p className="text-center font-medium py-2 border-b mx-8">
-        Movie Count: {MovieCount}
+      <h2 className="text-2xl font-bold text-center py-6 text-white">
+        {actorName}
+      </h2>
+      <p className="text-center font-medium py-2 border-b mx-8 text-white">
+        Movie Count: {movieCount}
       </p>
       <button
         onClick={onSeeMoreClick}
@@ -19,4 +21,4 @@ const MovieCard = ({ ActorName, MovieCount, onSeeMoreClick }) => {
   );
 };
 
-export default MovieCard;
+export default ActorCard;

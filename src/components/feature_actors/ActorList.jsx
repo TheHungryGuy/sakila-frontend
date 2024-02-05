@@ -1,26 +1,31 @@
 import React from "react";
 import ActorCard from "./ActorCard";
 
-const MovieList = () => {
-  const movies = [
-    { title: "Movie 1", rentalCount: 20 },
-    { title: "Movie 2", rentalCount: 15 },
-    { title: "Movie 3", rentalCount: 10 },
-    { title: "Movie 4", rentalCount: 8 },
-    { title: "Super Long Movie 5", rentalCount: 5 },
+const ActorList = () => {
+  const actors = [
+    { actorName: "Actor 1", MovieCount: 20 },
+    { actorName: "Actor 2", MovieCount: 15 },
+    { actorName: "Actor 3", MovieCount: 10 },
+    { actorName: "Actor 4", MovieCount: 8 },
+    { actorName: "Super Long Actor 5", MovieCount: 5 },
     // Test Actor List
   ];
 
   return (
-    <div className="w-full py-[10rem] px-4 bg-white">
+    <div className="w-full py-[10rem] px-4 bg-[#000300] flex flex-col gap-24">
+      <div className="order-first">
+        <header className="text-center font-bold text-6xl text-white ">
+          Top 5 Actors
+        </header>
+      </div>
       <div className="max-w-[1240px] mx-auto grid md:grid-cols-5 gap-8">
-        {movies.map((movie, index) => (
-          <MovieCard
+        {actors.map((Actor, index) => (
+          <ActorCard
             key={index}
-            title={movie.title}
-            rentalCount={movie.rentalCount}
+            actorName={Actor.actorName}
+            movieCount={Actor.MovieCount}
             onSeeMoreClick={() =>
-              console.log(`See more details for ${movie.title}`)
+              console.log(`See more details for ${Actor.actorName}`)
             }
           />
         ))}
@@ -29,4 +34,4 @@ const MovieList = () => {
   );
 };
 
-export default MovieList;
+export default ActorList;
