@@ -4,18 +4,16 @@ import { Button, Modal } from "flowbite-react";
 import { Label, TextInput } from "flowbite-react";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  { field: "age", headerName: "Age", type: "number", width: 90 },
+  { field: "film_id", headerName: "ID", type: "number", width: 70 },
+  { field: "title", headerName: "Title", width: 130 },
+  { field: "description", headerName: "Description", width: 200 },
+  { field: "rating", headerName: "Rating", width: 200 },
+  { field: "special_features", headerName: "special_features", width: 200 },
   {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+    field: "release_year",
+    headerName: "Release Year",
+    type: "number",
+    width: 90,
   },
 ];
 
