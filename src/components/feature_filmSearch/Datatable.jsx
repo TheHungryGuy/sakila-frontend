@@ -28,6 +28,11 @@ const DataTable = () => {
   const [films, setFilms] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [movieInfo, setMovieInfo] = useState({});
+  const [remainingInventory, setRemainingInventory] = useState([]);
+  const [customerId, setCustomerId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [selectedInventoryId, setSelectedInventoryId] = useState(null); // Track the selected inventory ID
 
   useEffect(() => {
     fetch("http://127.0.0.1:5000/all_films")
@@ -44,11 +49,67 @@ const DataTable = () => {
   }, []);
 
   const handleCellClick = (params) => {
-    // if (params.field === "title") {
-    console.log("Selected Row:", params.row);
-    setSelectedRow(params.row);
-    setOpenModal(true);
-    // }
+    const filmId = params.row.film_id;
+
+    // Fetch movie info
+    fetch(`http://127.0.0.1:5000/movie_info?movie_id=${filmId}`)
+      .then((response) => response.json())
+      .then((movieData) => {
+        setMovieInfo(movieData);
+
+        // Fetch remaining inventory
+        fetch(`http://127.0.0.1:5000/remaining_inventory/${filmId}`)
+          .then((response) => response.json())
+          .then((inventoryData) => {
+            setRemainingInventory(inventoryData);
+
+            // Find the lowest inventory ID
+            const lowestInventoryId = Math.min(
+              ...inventoryData.map((inventory) => inventory.inventory_id)
+            );
+            setSelectedInventoryId(lowestInventoryId);
+
+            setSelectedRow(params.row);
+            setOpenModal(true);
+          })
+          .catch((error) =>
+            console.error("Error fetching remaining inventory:", error)
+          );
+      })
+      .catch((error) => console.error("Error fetching movie info:", error));
+  };
+
+  const handleRentMovie = () => {
+    console.log("Selected Row:", movieInfo);
+    // Check if the number of copies is greater than 0
+    if (movieInfo.number_of_copies <= 0) {
+      setErrorMessage("No copies available for rent.");
+      return;
+    }
+
+    // Check if the customer ID exists in the database
+    fetch(`http://127.0.0.1:5000/check_customer/${customerId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.customer_exists) {
+          setErrorMessage("Customer does not exist.");
+          return;
+        }
+
+        // If all checks pass, rent out the movie using the selected inventory ID
+        fetch(
+          `http://127.0.0.1:5000/rent_movie/${selectedInventoryId}/${customerId}`,
+          {
+            method: "POST",
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data.message); // Success message
+          })
+          .catch((error) => console.error("Error renting movie:", error));
+      })
+      .catch((error) => console.error("Error checking customer:", error));
   };
 
   return (
@@ -65,14 +126,11 @@ const DataTable = () => {
 
         <Modal.Body>
           <div className="space-y-4">
-            {/* <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Release Year: {selectedRow?.release_year}
-            </p> */}
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               Description: {selectedRow?.description}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Release: {selectedRow?.release_year}
+              Release Year: {selectedRow?.release_year}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               Rating: {selectedRow?.rating}
@@ -80,34 +138,43 @@ const DataTable = () => {
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               Special Features: {selectedRow?.special_features}
             </p>
+            {/* Display movie info */}
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Number of Copies: {movieInfo?.number_of_copies}
+            </p>
+            {/* Display remaining inventory */}
+            {remainingInventory?.length > 0 && (
+              <div>
+                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  Remaining Inventory ID's:{" "}
+                  {remainingInventory
+                    .map((inventory) => inventory.inventory_id)
+                    .join(", ")}
+                </p>
+              </div>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <div className="flex max-w-md flex-col gap-4">
+          <div className="flex max-w-md flex-col gap-2">
             <div>
               <div className="mb-2 block">
                 <Label
-                  htmlFor="username3"
-                  color="success"
-                  value="Customer Id"
+                  htmlFor="customerID"
+                  // color="success"
+                  value="Enter Customer ID"
                 />
               </div>
               <TextInput
-                id="username"
-                placeholder="e.g 0123456789"
-                required
-                color="success"
-                helperText={
-                  <>
-                    <span className="font-medium">Alright!</span> Movie
-                    Succesfully Rented!
-                  </>
-                }
+                type="text"
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
+                helperText={errorMessage ? errorMessage : " ㅤ"} //change this when success or error
               />
             </div>
           </div>
-          <Button color="warning" onClick={() => setOpenModal(false)}>
-            Submit
+          <Button color="warning" onClick={handleRentMovie}>
+            Rent Movie
           </Button>
         </Modal.Footer>
       </Modal>
