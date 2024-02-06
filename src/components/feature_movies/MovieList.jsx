@@ -1,23 +1,35 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 import { Button, Modal } from "flowbite-react";
 
 const MovieList = () => {
-  const movies = [
-    { title: "Movie 1", rentalCount: 20 },
-    { title: "Movie 2", rentalCount: 15 },
-    { title: "Movie 3", rentalCount: 10 },
-    { title: "Movie 4", rentalCount: 8 },
-    { title: "Super Long Movie 5", rentalCount: 5 },
-    // Test Movies list
-  ];
+  // const movies = [
+  //   { title: "Movie 1", rentalCount: 20 },
+  //   { title: "Movie 2", rentalCount: 15 },
+  //   { title: "Movie 3", rentalCount: 10 },
+  //   { title: "Movie 4", rentalCount: 8 },
+  //   { title: "Super Long Movie 5", rentalCount: 5 },
+  //   // Test Movies list
+  // ];
 
+  const [topMovies, setTopMovies] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState({
     title: "",
+    description: "",
+    releaseYear: "",
+    rating: "",
+    specialFeatures: "",
     rentalCount: 0,
   });
+
+  useEffect(() => {
+    // Fetch top 5 most rented movies from Flask backend
+    fetch("http://127.0.0.1:5000/top_rented_movies")
+      .then((response) => response.json())
+      .then((data) => setTopMovies(data.top_movies))
+      .catch((error) => console.error("Error fetching top movies:", error));
+  }, []);
 
   const handleSeeMoreClick = (movie) => {
     setSelectedMovie(movie);
@@ -34,22 +46,16 @@ const MovieList = () => {
               Rental Count: {selectedMovie.rentalCount}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Description: ipsum Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Omnis accusamus ad, qui ipsam nesciunt nam
-              minima modi voluptates debitis quam, iste fugit sed eligendi
-              laboriosam, voluptate perferendis accusantium quia soluta. Year
+              Description: {selectedMovie.description}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Release: 20XX
+              Release: {selectedMovie.releaseYear}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Rating: PG-13
+              Rating: {selectedMovie.rating}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Special Features: Lorem ipsum dolor, sit amet consectetur
-              adipisicing elit. Ipsam quos voluptates quod quas dicta omnis
-              eligendi sit commodi non quisquam nisi, harum inventore cumque
-              ipsum architecto tempora nihil. Officia, explicabo.
+              Special Features: {selectedMovie.specialFeatures}
             </p>
           </div>
         </Modal.Body>
@@ -65,13 +71,13 @@ const MovieList = () => {
         </header>
       </div>
       <div className="max-w-[1240px] mx-auto grid md:grid-cols-5 gap-8">
-        {movies.map((movie, index) => (
+        {topMovies.map((movie, index) => (
           <MovieCard
             key={index}
             title={movie.title}
             rentalCount={movie.rentalCount}
             onSeeMoreClick={() => {
-              console.log(`See more details for ${movie.title}`);
+              console.log(`See more details for ${movie.title}:`, movie);
               handleSeeMoreClick(movie);
             }}
           />

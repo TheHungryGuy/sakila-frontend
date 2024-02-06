@@ -1,87 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Modal } from "flowbite-react";
 import { Label, TextInput } from "flowbite-react";
 
 const columns = [
   { field: "film_id", headerName: "ID", type: "number", width: 70 },
-  { field: "title", headerName: "Title", width: 130 },
-  { field: "description", headerName: "Description", width: 200 },
-  { field: "rating", headerName: "Rating", width: 200 },
-  { field: "special_features", headerName: "special_features", width: 200 },
-  {
-    field: "release_year",
-    headerName: "Release Year",
-    type: "number",
-    width: 90,
-  },
+  { field: "title", headerName: "Title", width: 250 },
+  { field: "description", headerName: "Description", width: 400 },
+  { field: "rating", headerName: "Rating", width: 70 },
+  { field: "special_features", headerName: "Special Features", width: 200 },
+  { field: "release_year", headerName: "Release Year", width: 120 },
 ];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
+//test data
+// const rows = [
+//   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+//   { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+//   { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+//   { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+//   { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
+//   { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
+//   { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+//   { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+//   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+// ];
 
 const DataTable = () => {
+  const [films, setFilms] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/all_films")
+      .then((response) => response.json())
+      .then((data) => {
+        // Add a unique 'id' property to each row based on 'film_id'
+        const filmsWithId = data.films.map((film) => ({
+          ...film,
+          id: film.film_id,
+        }));
+        setFilms(filmsWithId);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
   const handleCellClick = (params) => {
-    // You can customize this condition based on your needs
-    if (params.field === "fullName") {
-      console.log("Selected Row:", params.row);
-      setSelectedRow(params.row);
-      setOpenModal(true);
-    }
+    // if (params.field === "title") {
+    console.log("Selected Row:", params.row);
+    setSelectedRow(params.row);
+    setOpenModal(true);
+    // }
   };
 
-  // const handleCloseModal = () => {
-  //   setOpenModal(false);
-  // };
-
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <div className="" style={{ height: 800, width: "83%", margin: "auto" }}>
       <DataGrid
-        rows={rows}
+        rows={films}
         columns={columns}
-        pageSize={5}
+        pageSize={100}
         onCellClick={handleCellClick}
       />
 
       <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>
-          {selectedRow?.firstName} {selectedRow?.lastName}
-        </Modal.Header>
+        <Modal.Header>{selectedRow?.title}</Modal.Header>
 
         <Modal.Body>
-          <div className="space-y-6">
+          <div className="space-y-4">
+            {/* <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Release Year: {selectedRow?.release_year}
+            </p> */}
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              {/* Rental Count: {selectedMovie.rentalCount} */}
+              Description: {selectedRow?.description}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Description: ipsum Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Omnis accusamus ad, qui ipsam nesciunt nam
-              minima modi voluptates debitis quam, iste fugit sed eligendi
-              laboriosam, voluptate perferendis accusantium quia soluta. Year
+              Release: {selectedRow?.release_year}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Release: 20XX
+              Rating: {selectedRow?.rating}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Rating: PG-13
-            </p>
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Special Features: Lorem ipsum dolor, sit amet consectetur
-              adipisicing elit. Ipsam quos voluptates quod quas dicta omnis
-              eligendi sit commodi non quisquam nisi, harum inventore cumque
-              ipsum architecto tempora nihil. Officia, explicabo.
+              Special Features: {selectedRow?.special_features}
             </p>
           </div>
         </Modal.Body>
