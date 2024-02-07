@@ -32,6 +32,7 @@ const DataTable = () => {
   const [remainingInventory, setRemainingInventory] = useState([]);
   const [customerId, setCustomerId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [selectedInventoryId, setSelectedInventoryId] = useState(null); // Track the selected inventory ID
 
   useEffect(() => {
@@ -106,10 +107,23 @@ const DataTable = () => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data.message); // Success message
+            if (data.message) {
+              setErrorMessage(""); // Clear error message
+              setSuccessMessage(data.message); // Set success message
+              setCustomerId(""); // Clear customer ID field
+            }
           })
-          .catch((error) => console.error("Error renting movie:", error));
+          .catch((error) => {
+            console.error("Error renting movie:", error);
+            setSuccessMessage(""); // Clear success message
+            setErrorMessage("Error renting movie. Please try again."); // Set error message
+          });
       })
-      .catch((error) => console.error("Error checking customer:", error));
+      .catch((error) => {
+        console.error("Error checking customer:", error);
+        setSuccessMessage(""); // Clear success message
+        setErrorMessage("Error checking customer. Please try again."); // Set error message
+      });
   };
 
   return (
@@ -121,7 +135,15 @@ const DataTable = () => {
         onCellClick={handleCellClick}
       />
 
-      <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
+      <Modal
+        dismissible
+        show={openModal}
+        onClose={() => {
+          setOpenModal(false);
+          setErrorMessage("");
+          setSuccessMessage("");
+        }}
+      >
         <Modal.Header>{selectedRow?.title}</Modal.Header>
 
         <Modal.Body>
@@ -146,7 +168,7 @@ const DataTable = () => {
             {remainingInventory?.length > 0 && (
               <div>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  Remaining Inventory ID's:{" "}
+                  Available Inventory ID's:{" "}
                   {remainingInventory
                     .map((inventory) => inventory.inventory_id)
                     .join(", ")}
@@ -169,7 +191,13 @@ const DataTable = () => {
                 type="text"
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
-                helperText={errorMessage ? errorMessage : " ㅤ"} //change this when success or error
+                helperText={
+                  errorMessage
+                    ? errorMessage
+                    : successMessage
+                    ? successMessage
+                    : " ㅤ"
+                } //change this when success or error
               />
             </div>
           </div>
