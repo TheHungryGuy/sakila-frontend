@@ -36,10 +36,13 @@ const DataTable = () => {
   const [selectedInventoryId, setSelectedInventoryId] = useState(null); // Track the selected inventory ID
 
   useEffect(() => {
+    fetchFilms();
+  }, []);
+
+  const fetchFilms = () => {
     fetch("http://127.0.0.1:5000/all_films")
       .then((response) => response.json())
       .then((data) => {
-        // Add a unique 'id' property to each row based on 'film_id'
         const filmsWithId = data.films.map((film) => ({
           ...film,
           id: film.film_id,
@@ -47,43 +50,43 @@ const DataTable = () => {
         setFilms(filmsWithId);
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
-  const handleCellClick = (params) => {
-    const filmId = params.row.film_id;
-
-    // Fetch movie info
+  };
+  const fetchMovieInfoById = (filmId) => {
     fetch(`http://127.0.0.1:5000/movie_info?movie_id=${filmId}`)
       .then((response) => response.json())
       .then((movieData) => {
         setMovieInfo(movieData);
-
-        // Fetch remaining inventory
-        fetch(`http://127.0.0.1:5000/remaining_inventory/${filmId}`)
-          .then((response) => response.json())
-          .then((inventoryData) => {
-            setRemainingInventory(inventoryData);
-
-            // Find the lowest inventory ID
-            const lowestInventoryId = Math.min(
-              ...inventoryData.map((inventory) => inventory.inventory_id)
-            );
-            setSelectedInventoryId(lowestInventoryId);
-
-            setSelectedRow(params.row);
-            setOpenModal(true);
-          })
-          .catch((error) =>
-            console.error("Error fetching remaining inventory:", error)
-          );
+        fetchRemainingInventory(filmId);
       })
       .catch((error) => console.error("Error fetching movie info:", error));
+  };
+
+  const fetchRemainingInventory = (filmId) => {
+    fetch(`http://127.0.0.1:5000/remaining_inventory/${filmId}`)
+      .then((response) => response.json())
+      .then((inventoryData) => {
+        setRemainingInventory(inventoryData);
+        const lowestInventoryId = Math.min(
+          ...inventoryData.map((inventory) => inventory.inventory_id)
+        );
+        setSelectedInventoryId(lowestInventoryId);
+      })
+      .catch((error) =>
+        console.error("Error fetching remaining inventory:", error)
+      );
+  };
+
+  const handleCellClick = (params) => {
+    const filmId = params.row.film_id;
+    fetchMovieInfoById(filmId);
+    setSelectedRow(params.row);
+    setOpenModal(true);
   };
 
   const handleRentMovie = () => {
     console.log("Selected Row:", movieInfo);
     // Check if the number of copies is greater than 0
-    if (movieInfo.number_of_copies <= 0) {
+    if (movieInfo.remaining_copies <= 0) {
       setErrorMessage("No copies available for rent.");
       return;
     }
@@ -111,6 +114,7 @@ const DataTable = () => {
               setErrorMessage(""); // Clear error message
               setSuccessMessage(data.message); // Set success message
               setCustomerId(""); // Clear customer ID field
+              fetchMovieInfoById(selectedRow.film_id); // Refresh movie info
             }
           })
           .catch((error) => {
@@ -142,6 +146,7 @@ const DataTable = () => {
           setOpenModal(false);
           setErrorMessage("");
           setSuccessMessage("");
+          setCustomerId("");
         }}
       >
         <Modal.Header>{selectedRow?.title}</Modal.Header>
@@ -183,12 +188,17 @@ const DataTable = () => {
               <div className="mb-2 block">
                 <Label
                   htmlFor="customerID"
-                  // color="success"
+                  color={
+                    errorMessage ? "failure" : successMessage ? "success" : ""
+                  }
                   value="Enter Customer ID"
                 />
               </div>
               <TextInput
                 type="text"
+                color={
+                  errorMessage ? "failure" : successMessage ? "success" : ""
+                }
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
                 helperText={
