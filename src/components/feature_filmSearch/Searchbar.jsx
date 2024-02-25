@@ -4,7 +4,6 @@ import Dropdown from "../common/Dropdown";
 import { BASE_URL } from "../../utilities/constants";
 
 function FilmSearchbar({ onSearch }) {
-  const [films, setFilms] = useState([]);
   const [searchText, setSearchText] = useState("");
 
   const fetchFilmsByGenre = (genre) => {
