@@ -73,7 +73,7 @@ function FilmSearchbar({ onSearch }) {
         Search Films
       </header>
       <Dropdown
-        categories={["Genres", "Actors", "Title"]}
+        categories={["Title", "Actors", "Genres"]}
         placeholder="Search by category..."
         buttonText="Search"
         onSearch={handleSearch}
