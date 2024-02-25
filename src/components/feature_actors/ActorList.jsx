@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal } from "flowbite-react";
 import ActorCard from "./ActorCard";
+import { BASE_URL } from "../../utilities/constants";
 
 const ActorList = () => {
   // const actors = [
@@ -22,7 +23,7 @@ const ActorList = () => {
 
   useEffect(() => {
     // Fetch actors data from Flask backend when the component mounts
-    fetch("http://127.0.0.1:5000/top_actors")
+    fetch(`${BASE_URL}/top_actors`)
       .then((response) => response.json())
       .then((data) => setActors(data.top_actors))
       .catch((error) => console.error("Error fetching actor data", error));
@@ -32,7 +33,7 @@ const ActorList = () => {
     setSelectedActor(actor);
 
     // Fetch top movies for the selected actor
-    fetch(`http://localhost:5000/top_movies_for_actor/${actor.actor_id}`)
+    fetch(`${BASE_URL}/top_movies_for_actor/${actor.actor_id}`)
       .then((response) => response.json())
       .then((data) => {
         setTopMovies(data.top_movies);
