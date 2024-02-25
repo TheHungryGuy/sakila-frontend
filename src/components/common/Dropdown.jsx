@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
-function Dropdown({ categories, placeholder, onSearch }) {
+function Dropdown({ categories, placeholder, onSearch, onInputChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [searchText, setSearchText] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -14,8 +15,14 @@ function Dropdown({ categories, placeholder, onSearch }) {
   };
 
   const handleSearch = () => {
-    // Pass the selected category to the search handler
-    onSearch(selectedCategory);
+    // Pass the selected category and search text to the search handler
+    onSearch(selectedCategory, searchText);
+  };
+
+  const handleInputChange = (event) => {
+    // Update the search text state and call the input change handler
+    setSearchText(event.target.value);
+    onInputChange(event.target.value);
   };
 
   return (
@@ -72,6 +79,7 @@ function Dropdown({ categories, placeholder, onSearch }) {
           <input
             type="search"
             id="search-dropdown"
+            onChange={handleInputChange}
             className="block p-3 w-full md:w-96 z-20 text-lg text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-yellow-400 focus:border-yellow-400 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-yellow-500"
             placeholder={placeholder}
             required
@@ -79,7 +87,7 @@ function Dropdown({ categories, placeholder, onSearch }) {
           <button
             type="button" // Change to type="button" if you want to handle search via JavaScript
             onClick={handleSearch}
-            className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-yellow-400 rounded-e-lg border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+            className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-yellow-400 rounded-e-lg border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
           >
             <svg
               className="w-4 h-4"

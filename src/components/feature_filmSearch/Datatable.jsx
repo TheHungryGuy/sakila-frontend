@@ -26,7 +26,7 @@ const columns = [
 //   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
 // ];
 
-const DataTable = () => {
+const DataTable = ({ searchData }) => {
   const [films, setFilms] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -40,6 +40,11 @@ const DataTable = () => {
   useEffect(() => {
     fetchFilms();
   }, []);
+
+  // Update films state when search data changes
+  useEffect(() => {
+    setFilms(searchData);
+  }, [searchData]);
 
   const fetchFilms = () => {
     fetch(`${BASE_URL}/all_films`)
