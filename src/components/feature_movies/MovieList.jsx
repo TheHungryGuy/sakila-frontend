@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 import { Button, Modal } from "flowbite-react";
-
+import { BASE_URL } from "../../utilities/constants";
 const MovieList = () => {
   // const movies = [
   //   { title: "Movie 1", rentalCount: 20 },
@@ -25,7 +25,7 @@ const MovieList = () => {
 
   useEffect(() => {
     // Fetch top 5 most rented movies from Flask backend
-    fetch("http://127.0.0.1:5000/top_rented_movies")
+    fetch(`${BASE_URL}/top_rented_movies`)
       .then((response) => response.json())
       .then((data) => setTopMovies(data.top_movies))
       .catch((error) => console.error("Error fetching top movies:", error));

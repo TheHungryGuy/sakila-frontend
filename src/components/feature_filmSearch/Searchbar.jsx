@@ -68,13 +68,17 @@ function FilmSearchbar({ onSearch }) {
   };
 
   return (
-    <div>
+    <div className="lg:flex lg:justify-between max-w-[1240px] lg:items-center mx-auto px-4">
+      <header className="text-center font-bold lg:text-left lg:p-4 lg:px-8 text-6xl">
+        Search Films
+      </header>
       <Dropdown
         categories={["Genres", "Actors", "Title"]}
         placeholder="Search by category..."
         buttonText="Search"
         onSearch={handleSearch}
         onInputChange={(text) => setSearchText(text)}
+        className="lg:p-4"
       />
     </div>
   );
