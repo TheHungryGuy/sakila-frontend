@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 
+import { BASE_URL } from "../../utilities/constants";
+
 const columns = [
   { field: "customer_id", headerName: "Customer ID", width: 200 },
   { field: "first_name", headerName: "First Name", width: 250 },
@@ -12,7 +14,7 @@ const Customer_Datatable = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/customers")
+    fetch(`${BASE_URL}/customers`)
       .then((response) => response.json())
       .then((data) => {
         // Add a unique 'id' property to each row based on 'customer_id'

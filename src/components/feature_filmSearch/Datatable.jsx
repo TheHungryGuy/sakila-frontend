@@ -3,6 +3,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button, Modal } from "flowbite-react";
 import { Label, TextInput } from "flowbite-react";
 
+import { BASE_URL } from "../../utilities/constants";
+
 const columns = [
   { field: "film_id", headerName: "ID", type: "number", width: 70 },
   { field: "title", headerName: "Title", width: 250 },
@@ -40,7 +42,7 @@ const DataTable = () => {
   }, []);
 
   const fetchFilms = () => {
-    fetch("http://127.0.0.1:5000/all_films")
+    fetch(`${BASE_URL}/all_films`)
       .then((response) => response.json())
       .then((data) => {
         const filmsWithId = data.films.map((film) => ({
@@ -52,7 +54,7 @@ const DataTable = () => {
       .catch((error) => console.error("Error fetching data:", error));
   };
   const fetchMovieInfoById = (filmId) => {
-    fetch(`http://127.0.0.1:5000/movie_info?movie_id=${filmId}`)
+    fetch(`${BASE_URL}/movie_info?movie_id=${filmId}`)
       .then((response) => response.json())
       .then((movieData) => {
         setMovieInfo(movieData);
@@ -62,7 +64,7 @@ const DataTable = () => {
   };
 
   const fetchRemainingInventory = (filmId) => {
-    fetch(`http://127.0.0.1:5000/remaining_inventory/${filmId}`)
+    fetch(`${BASE_URL}/remaining_inventory/${filmId}`)
       .then((response) => response.json())
       .then((inventoryData) => {
         setRemainingInventory(inventoryData);
@@ -92,7 +94,7 @@ const DataTable = () => {
     }
 
     // Check if the customer ID exists in the database
-    fetch(`http://127.0.0.1:5000/check_customer/${customerId}`)
+    fetch(`${BASE_URL}/check_customer/${customerId}`)
       .then((response) => response.json())
       .then((data) => {
         if (!data.customer_exists) {
@@ -101,12 +103,9 @@ const DataTable = () => {
         }
 
         // If all checks pass, rent out the movie using the selected inventory ID
-        fetch(
-          `http://127.0.0.1:5000/rent_movie/${selectedInventoryId}/${customerId}`,
-          {
-            method: "POST",
-          }
-        )
+        fetch(`${BASE_URL}/rent_movie/${selectedInventoryId}/${customerId}`, {
+          method: "POST",
+        })
           .then((response) => response.json())
           .then((data) => {
             console.log(data.message); // Success message
