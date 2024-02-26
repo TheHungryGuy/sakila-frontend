@@ -158,26 +158,27 @@ const DataTable = ({ searchData }) => {
         <Modal.Body>
           <div className="space-y-4">
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Description: {selectedRow?.description}
+              <strong>Description: </strong> {selectedRow?.description}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Release Year: {selectedRow?.release_year}
+              <strong>Release Year: </strong> {selectedRow?.release_year}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Rating: {selectedRow?.rating}
+              <strong> Rating: </strong> {selectedRow?.rating}
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Special Features: {selectedRow?.special_features}
+              <strong>Special Features: </strong>{" "}
+              {selectedRow?.special_features}
             </p>
             {/* Display movie info */}
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Number of Copies: {movieInfo?.number_of_copies}
+              <strong> Number of Copies: </strong> {movieInfo?.number_of_copies}
             </p>
             {/* Display remaining inventory */}
             {remainingInventory?.length > 0 && (
               <div>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  Available Inventory ID's:{" "}
+                  <strong>Available Inventory ID's:</strong>{" "}
                   {remainingInventory
                     .map((inventory) => inventory.inventory_id)
                     .join(", ")}
