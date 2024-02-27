@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CustomerDatatable from "../components/feature_customerSearch/Customer_Datatable";
 import CustomerHeader from "../components/feature_customerSearch/CustomerHeader";
 import { BASE_URL } from "../utilities/constants";
