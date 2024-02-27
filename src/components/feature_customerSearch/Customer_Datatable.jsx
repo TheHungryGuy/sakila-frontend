@@ -78,6 +78,36 @@ const CustomerDatatable = () => {
     setRentalHistory(rentalHistoryWithId);
   };
 
+  const handleReturnMovie = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/update_return_date/${rentalId}`,
+        {
+          method: "PUT",
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update return date");
+      }
+      setSuccessMessage("Return date updated successfully");
+      setErrorMessage("");
+      // Fetch the latest rental data
+      const updatedRentalHistory = await fetchCustomerRentals(customerId);
+      // Update the state with the new data
+      // Add a unique id property to each row based on rental_id
+      const rentalHistoryWithId = updatedRentalHistory.map((rental) => ({
+        ...rental,
+        id: rental.rental_id,
+      }));
+      setRentalHistory(rentalHistoryWithId);
+    } catch (error) {
+      console.error("Error updating return date:", error);
+      setErrorMessage(error.message);
+      setSuccessMessage("");
+    }
+  };
+
   return (
     <div style={{ height: 800, width: "83%", margin: "auto" }}>
       <DataGrid
@@ -94,6 +124,7 @@ const CustomerDatatable = () => {
           setOpenCustomerModal(false);
           setErrorMessage("");
           setSuccessMessage("");
+          setRentalId(""); // Reset the rentalId state
           setCustomerId("");
         }}
       >
@@ -156,10 +187,7 @@ const CustomerDatatable = () => {
             </div>
           </div>
           <div className="flex items-center justify-end space-x-4">
-            <Button
-              color="warning"
-              onClick={() => console.log("Return clicked")}
-            >
+            <Button color="warning" onClick={handleReturnMovie}>
               Return Movie
             </Button>
             <Button color="dark" onClick={() => setOpenEditModal(true)}>
