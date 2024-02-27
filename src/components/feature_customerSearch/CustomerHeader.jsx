@@ -47,8 +47,10 @@ const CustomerHeader = () => {
   };
 
   return (
-    <div className="flex justify-between items-center  px-6 ">
-      <header className="text-6xl font-bold">Customer Details</header>
+    <div className="lg:flex lg:justify-between max-w-[1240px] lg:items-center mx-auto px-4">
+      <header className="text-center font-bold lg:text-left lg:p-4 lg:px-8 text-6xl">
+        Customer Details
+      </header>
       <Button onClick={() => setOpenModal(true)} color="warning">
         Add Customer
       </Button>
