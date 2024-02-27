@@ -20,7 +20,7 @@ const rentalHistoryColumns = [
   { field: "return_date", headerName: "Return Date", width: 300 },
 ];
 
-const CustomerDatatable = () => {
+const CustomerDatatable = ({ customersData }) => {
   const [customers, setCustomers] = useState([]);
   const [customerId, setCustomerId] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
@@ -38,6 +38,11 @@ const CustomerDatatable = () => {
   useEffect(() => {
     fetchCustomerData(setCustomers);
   }, []);
+
+  // Update films state when search data changes
+  useEffect(() => {
+    setCustomers(customersData);
+  }, [customersData]);
 
   const fetchCustomerData = async (setRentalHistory) => {
     try {

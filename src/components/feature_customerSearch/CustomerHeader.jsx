@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import { BASE_URL } from "../../utilities/constants";
 
-const CustomerHeader = () => {
+const CustomerHeader = ({ onAddCustomerSuccess }) => {
   const [openModal, setOpenModal] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -39,6 +39,7 @@ const CustomerHeader = () => {
       }
       setSuccessMessage("Customer successfully added");
       setErrorMessage("");
+      onAddCustomerSuccess(); // Call the prop function here
     } catch (error) {
       console.error("Error adding customer:", error);
       setErrorMessage(error.message);
