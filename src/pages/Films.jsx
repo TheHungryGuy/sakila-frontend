@@ -11,7 +11,7 @@ const Films = () => {
   };
 
   return (
-    <div className="w-full pt-[4rem] py-[10rem] px-4 bg-white flex flex-col gap-12">
+    <div className="w-full pt-[2rem] py-[10rem] px-4 bg-white flex flex-col gap-10">
       <FilmSearchbar onSearch={handleSearch} />
       <DataTable searchData={searchResults} />
     </div>

@@ -4,7 +4,7 @@ import CustomerHeader from "../components/feature_customerSearch/CustomerHeader"
 
 const Customer = () => {
   return (
-    <div className="w-full pt-[4rem] py-[10rem] px-4 bg-white flex flex-col gap-24">
+    <div className="w-full pt-[2rem] py-[10rem] px-4 bg-white flex flex-col gap-10">
       <CustomerHeader />
       <CustomerDatatable />
     </div>
