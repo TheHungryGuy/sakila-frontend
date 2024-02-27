@@ -257,6 +257,7 @@ const CustomerDatatable = ({ customersData }) => {
                 rows={rentalHistory}
                 columns={rentalHistoryColumns}
                 pageSize={50}
+                disableRowSelectionOnClick
               />
             </div>
           </div>
