@@ -31,6 +31,9 @@ const CustomerDatatable = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [editedFirstName, setEditedFirstName] = useState("");
+  const [editedLastName, setEditedLastName] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
 
   useEffect(() => {
     fetchCustomerData(setCustomers);
@@ -108,6 +111,102 @@ const CustomerDatatable = () => {
     }
   };
 
+  const handleDeleteCustomer = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/delete_customer/${customerId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete customer");
+      }
+      setSuccessMessage("Customer deleted successfully");
+      setErrorMessage("");
+      // Fetch the latest customer data after deletion
+      fetchCustomerData(setCustomers);
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      setErrorMessage(error.message);
+      setSuccessMessage("");
+    }
+  };
+  // Update this function to populate the fields with the current customer details
+  const handleOpenEditModal = (customer) => {
+    // Set the state variables with the current customer details
+    setEditedFirstName(customer.first_name);
+    setEditedLastName(customer.last_name);
+    setEditedEmail(customer.email);
+    // Open the edit modal
+    setOpenEditModal(true);
+  };
+  const handleEditDetails = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/update_customer/${customerId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            first_name: editedFirstName,
+            last_name: editedLastName,
+            email: editedEmail,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update customer details");
+      }
+      setSuccessMessage("Customer details updated successfully");
+      setErrorMessage("");
+      // Fetch the latest customer data after update
+      fetchCustomerData(setCustomers);
+      setOpenEditModal(false); // Close the modal after successful update
+      // Reset edited fields after successful update
+      setEditedFirstName("");
+      setEditedLastName("");
+      setEditedEmail("");
+      // Update selectedRow with the edited customer details
+      const updatedRow = {
+        ...selectedRow,
+        first_name: editedFirstName,
+        last_name: editedLastName,
+        email: editedEmail,
+      };
+      setSelectedRow(updatedRow);
+      // // Fetch and update the rental history of the edited customer
+      // const updatedRentalHistory = await fetchCustomerRentals(
+      //   selectedRow.customer_id
+      // );
+      // setRentalHistory(updatedRentalHistory);
+    } catch (error) {
+      console.error("Error updating customer details:", error);
+      setErrorMessage(error.message);
+      setSuccessMessage("");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "firstName":
+        setEditedFirstName(value);
+        break;
+      case "lastName":
+        setEditedLastName(value);
+        break;
+      case "email":
+        setEditedEmail(value);
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <div style={{ height: 800, width: "83%", margin: "auto" }}>
       <DataGrid
@@ -190,7 +289,10 @@ const CustomerDatatable = () => {
             <Button color="warning" onClick={handleReturnMovie}>
               Return Movie
             </Button>
-            <Button color="dark" onClick={() => setOpenEditModal(true)}>
+            <Button
+              color="dark"
+              onClick={() => handleOpenEditModal(selectedRow)}
+            >
               Edit Details
             </Button>
             <Modal
@@ -207,26 +309,55 @@ const CustomerDatatable = () => {
                     Edit Customer Details
                   </h3>
 
-                  <form className="flex max-w-md flex-col gap-4">
+                  <form
+                    className="flex max-w-md flex-col gap-4"
+                    onSubmit={(e) => {
+                      e.preventDefault(); // Prevent default form submission
+                      handleEditDetails();
+                    }}
+                  >
                     <div>
                       <div className="mb-2 block">
                         <Label htmlFor="FirstName" value="First Name" />
                       </div>
-                      <TextInput id="FirstName" type="text" required shadow />
+                      <TextInput
+                        id="FirstName"
+                        type="text"
+                        name="firstName"
+                        required
+                        shadow
+                        value={editedFirstName}
+                        onChange={handleInputChange}
+                      />
                     </div>
                     <div>
                       <div className="mb-2 block">
                         <Label htmlFor="LastName" value="Last Name" />
                       </div>
-                      <TextInput id="LastName" type="text" required shadow />
+                      <TextInput
+                        id="LastName"
+                        type="text"
+                        name="lastName"
+                        required
+                        shadow
+                        value={editedLastName}
+                        onChange={handleInputChange}
+                      />
                     </div>
                     <div>
                       <div className="mb-2 block">
                         <Label htmlFor="email2" value="Customer email" />
                       </div>
-                      <TextInput id="email2" type="email" required shadow />
+                      <TextInput
+                        id="email2"
+                        type="email"
+                        name="email"
+                        required
+                        shadow
+                        value={editedEmail}
+                        onChange={handleInputChange}
+                      />
                     </div>
-
                     <Button type="submit" color="warning">
                       Update Customer Details
                     </Button>
@@ -253,7 +384,10 @@ const CustomerDatatable = () => {
                   <div className="flex justify-center gap-4">
                     <Button
                       color="failure"
-                      onClick={() => setOpenDeleteModal(false)}
+                      onClick={() => {
+                        handleDeleteCustomer();
+                        setOpenDeleteModal(false);
+                      }}
                     >
                       {"Yes, I'm sure"}
                     </Button>
